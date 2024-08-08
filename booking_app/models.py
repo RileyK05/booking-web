@@ -102,3 +102,15 @@ class BookingInfo(models.Model):
 
     def __str__(self):
         return f"Booking Info"
+
+class EventInfo(models.Model):
+    event_name = models.CharField(max_length=255)
+    event_date = models.DateField()
+    event_description = models.TextField(null=True, blank=True)
+    room = models.ForeignKey(RoomItem, on_delete=models.CASCADE, related_name="events")
+    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, blank=True, related_name="events")
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    
+    def __str__(self):
+        return f"Event {self.event_name} on {self.event_date}"
+

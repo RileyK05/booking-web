@@ -10,7 +10,7 @@ from django.utils import timezone
 from .forms import CustomUserCreationForm, ReviewForm
 from .models import (User, Discount, RoomItem, 
                      Booking, Address, RoomBooked, 
-                     Review, BookingInfo)
+                     Review, BookingInfo, EventInfo)
 
 
 def index(request):
