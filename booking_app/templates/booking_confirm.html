@@ -1,1 +1,14 @@
 
+{% extends "base_generic.html" %}
+
+{% block title %}Booking Confirmation{% endblock %}
+
+{% block content %}
+<h1>Booking Confirmation</h1>
+<p>Booking Reference: {{ booking.booking_reference }}</p>
+<p>Room: {{ booking.room.title }}</p>
+<p>Check-in: {{ booking.check_in }}</p>
+<p>Check-out: {{ booking.check_out }}</p>
+<p>Total Cost: ${{ booking.total_cost }}</p>
+<a href="{% url 'payment' %}" class="btn btn-success">Proceed to Payment</a>
+{% endblock %}

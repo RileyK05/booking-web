@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block title %}My Booked Rooms{% endblock %}
+
+{% block content %}
+<h1>My Booked Rooms</h1>
+{% for room in booked_rooms %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ room.room.title }}</h5>
+            <p class="card-text">Booking Date: {{ room.time_booked }}</p>
+            <a href="{% url 'room_detail' room.room.pk %}" class="btn btn-primary">View Room</a>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

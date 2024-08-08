@@ -1,0 +1,9 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Payment Failed{% endblock %}
+
+{% block content %}
+<h1>Payment Failed</h1>
+<p>There was an issue processing your payment. Please try again.</p>
+<a href="{% url 'payment' %}" class="btn btn-danger">Try Again</a>
+{% endblock %}

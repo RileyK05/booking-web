@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Booking History{% endblock %}
+
+{% block content %}
+<h1>My Booking History</h1>
+{% for booking in bookings %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Booking #{{ booking.pk }}</h5>
+            <p class="card-text">Check-in: {{ booking.check_in }}</p>
+            <p class="card-text">Check-out: {{ booking.check_out }}</p>
+            <p class="card-text">Status: {{ booking.get_payment_status_display }}</p>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

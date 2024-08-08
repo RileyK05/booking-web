@@ -1,0 +1,9 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Payment Success{% endblock %}
+
+{% block content %}
+<h1>Payment Successful</h1>
+<p>Your payment was processed successfully.</p>
+<a href="{% url 'index' %}" class="btn btn-primary">Go to Home</a>
+{% endblock %}
