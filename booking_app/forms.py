@@ -19,3 +19,7 @@ class RoomSearchForm(forms.Form):
     max_price = forms.DecimalField(required=False, min_value=0.01, decimal_places=2)
     amenities = forms.CharField(required=False, max_length=100)
     availability = forms.BooleanField(required=False)
+    
+class PaymentForm(forms.Form):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2)
+    stripe_token = forms.CharField(max_length=255)

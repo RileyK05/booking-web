@@ -1,4 +1,5 @@
 import random
+import stripe
 from django.db.models import BooleanField, Case, When
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
@@ -7,11 +8,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
-from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm
+from django.conf import settings
+from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm, PaymentForm
 from .models import (User, Discount, RoomItem, 
                      Booking, Address, RoomBooked, 
-                     Review, BookingInfo, EventInfo)
+                     Review, BookingInfo, EventInfo,
+                     Payment)
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def index(request):
     return render(request, 'index.html')
@@ -148,4 +152,45 @@ class BookingConfirmView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(user=self.request.user)
-    
+
+class PaymentView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = PaymentForm()
+        return render(request, 'payment.html', {'form': form, 'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY})
+
+    def post(self, request):
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            stripe_token = form.cleaned_data['stripe_token']
+            
+            try:
+                charge = stripe.Charge.create(
+                    amount=int(amount * 100),
+                    currency='usd',
+                    source=stripe_token,
+                    description='Payment Description'
+                )
+                
+                Payment.objects.create(
+                    user=request.user,
+                    amount=amount,
+                    stripe_charge_id=charge.id,
+                    status='Completed'
+                )
+                return redirect('payment_success')
+            except stripe.error.StripeError:
+                Payment.objects.create(
+                    user=request.user,
+                    amount=amount,
+                    status='Failed'
+                )
+                return redirect('payment_failed')
+
+        return render(request, 'payment.html', {'form': form, 'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY})
+
+class PaymentSuccessView(LoginRequiredMixin, TemplateView):
+    template_name = "payment_success.html"
+
+class PaymentFailedView(LoginRequiredMixin, TemplateView):
+    template_name = "payment_failed.html"
