@@ -2,7 +2,7 @@ import random
 from django.db.models import BooleanField, Case, When
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, View, CreateView
+from django.views.generic import ListView, DetailView, View, CreateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
@@ -139,4 +139,13 @@ class RoomSearchView(ListView):
         context['featured'] = True
         context['search_form'] = RoomSearchForm(self.request.GET or None) 
         return context
+    
+class BookingConfirmView(LoginRequiredMixin, DetailView):
+    model = Booking
+    template_name = "booking_confirm.html"
+    context_object_name = "booking"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
     
