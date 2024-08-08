@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
-from .forms import CustomUserCreationForm, ReviewForm
+from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm
 from .models import (User, Discount, RoomItem, 
                      Booking, Address, RoomBooked, 
                      Review, BookingInfo, EventInfo)
@@ -15,7 +15,6 @@ from .models import (User, Discount, RoomItem,
 
 def index(request):
     return render(request, 'index.html')
-
 
 class UserView(View):
     def get(self, request, *args, **kwargs):
@@ -105,3 +104,39 @@ class ReviewSubmitView(LoginRequiredMixin, CreateView):
     
     def get_success_url(self):
         return reverse_lazy('index')
+    
+class RoomSearchView(ListView):
+    model = RoomItem
+    template_name = "room_main_view.html"
+    context_object_name = "rooms"
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(available=True).order_by('?')
+
+        location = self.request.GET.get('location')
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+        amenities = self.request.GET.get('amenities')
+        availability = self.request.GET.get('availability')
+
+        if location:
+            queryset = queryset.filter(description__icontains=location)
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+        if amenities:
+            queryset = queryset.filter(description__icontains=amenities)
+        if availability:
+            queryset = queryset.filter(rooms_available__gt=0)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['featured'] = True
+        context['search_form'] = RoomSearchForm(self.request.GET or None) 
+        return context
+    

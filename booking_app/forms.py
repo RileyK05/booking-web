@@ -12,3 +12,10 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['room', 'description', 'rating']
+        
+class RoomSearchForm(forms.Form):
+    location = forms.CharField(required=False, max_length=100)
+    min_price = forms.DecimalField(required=False, min_value=0.01, decimal_places=2)
+    max_price = forms.DecimalField(required=False, min_value=0.01, decimal_places=2)
+    amenities = forms.CharField(required=False, max_length=100)
+    availability = forms.BooleanField(required=False)
