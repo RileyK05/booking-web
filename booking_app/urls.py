@@ -3,7 +3,7 @@ from .views import (
     index, UserView, CreateUserView, FeaturedRooms, 
     UserBookedRoomsView, DiscountedRoomsView, RoomDetailView,
     BookingHistoryView, ReviewSubmitView, RoomSearchView,
-    BookingConfirmView, PaymentView, PaymentSuccessView, PaymentFailedView
+    BookingConfirmView, InitiatePaymentView, PaymentSuccessView, PaymentFailedView
 )
 
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
     path('review/add/', ReviewSubmitView.as_view(), name='review_add'),
     path('search/', RoomSearchView.as_view(), name='room_search'),
     path('booking/confirm/<int:pk>/', BookingConfirmView.as_view(), name='booking_confirm'),
-    path('payment/', PaymentView.as_view(), name='payment'),
+    path('payment/<int:pk>/', InitiatePaymentView.as_view(), name='payment'), 
     path('payment/success/', PaymentSuccessView.as_view(), name='payment_success'),
     path('payment/failed/', PaymentFailedView.as_view(), name='payment_failed'),
     path('accounts/', include('django.contrib.auth.urls')),

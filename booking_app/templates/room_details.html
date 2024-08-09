@@ -6,5 +6,10 @@
 <h1>{{ room.title }}</h1>
 <p>{{ room.description }}</p>
 <p>Price: ${{ room.price }}</p>
-<a href="#" class="btn btn-success">Book Now</a>
+
+<form method="POST" action="{% url 'payment' room.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Book Now</button>
+</form>
+
 {% endblock %}

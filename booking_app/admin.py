@@ -30,16 +30,20 @@ class UserAdmin(admin.ModelAdmin):
         return obj.profile_rating or "N/A"
 
 
+class RoomBookedInline(admin.TabularInline):
+    model = models.RoomBooked
+    extra = 1
+    raw_id_fields = ['location']  # Allows for easier searching when selecting related objects
+
 @admin.register(models.RoomItem)
 class RoomItemAdmin(admin.ModelAdmin):
-    prepopulated_fields = {
-        'slug': ['title']
-    }
+    prepopulated_fields = {'slug': ['title']}
     list_display = ['title', 'price', 'rooms_available', 'available']
     list_editable = ['price', 'rooms_available', 'available']
     list_filter = ['available']
     search_fields = ['title', 'description']
-
+    inlines = [RoomBookedInline]
+    
     @admin.action(description='Clear Room Availability')
     def clear_availability(self, request, queryset):
         updated_count = queryset.update(rooms_available=0)
@@ -47,9 +51,9 @@ class RoomItemAdmin(admin.ModelAdmin):
             request,
             f'{updated_count} rooms were successfully updated',
             messages.WARNING
-        ) 
+        )
 
-@admin.register(models.Booking)  
+@admin.register(models.Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = [
         'user', 'time_placed', 'check_in', 'check_out', 'payment_status', 'booking_reference'
@@ -63,6 +67,7 @@ class RoomBookedAdmin(admin.ModelAdmin):
     list_display = ['room', 'booking', 'location', 'time_booked', 'number_of_nights', 'total_cost']
     search_fields = ['room__title', 'booking__user__username', 'location__city']
     list_filter = ['time_booked', 'location__city']
+    raw_id_fields = ['room', 'booking', 'location']  # Improved usability
 
 @admin.register(models.Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -85,6 +90,7 @@ class EventInfoAdmin(admin.ModelAdmin):
     list_display = ['event_name', 'event_date', 'room', 'discount']
     search_fields = ['event_name', 'room__title']
     list_filter = ['event_date']
+    raw_id_fields = ['room', 'discount']
 
 @admin.register(models.Payment)
 class PaymentAdmin(admin.ModelAdmin):
@@ -92,3 +98,9 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'stripe_charge_id']
     list_filter = ['status', 'timestamp']
     ordering = ['-timestamp']
+
+@admin.register(models.Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ['street', 'city', 'state', 'country', 'postal_code']
+    search_fields = ['street', 'city', 'country', 'postal_code']
+    list_filter = ['country', 'city']

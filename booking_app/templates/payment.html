@@ -6,7 +6,7 @@
 <h1>Make a Payment</h1>
 <form method="post" id="payment-form">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div id="card-element"></div>
     <button type="submit" class="btn btn-primary">Pay</button>
 </form>
 <script src="https://js.stripe.com/v3/"></script>
@@ -22,16 +22,14 @@
 
         stripe.createToken(cardElement).then(function(result) {
             if (result.error) {
-                // Display error.message in your UI.
+                alert(result.error.message);
             } else {
-                // Add the token to the form and submit.
                 var hiddenInput = document.createElement('input');
                 hiddenInput.setAttribute('type', 'hidden');
                 hiddenInput.setAttribute('name', 'stripe_token');
                 hiddenInput.setAttribute('value', result.token.id);
                 form.appendChild(hiddenInput);
 
-                // Submit the form
                 form.submit();
             }
         });
