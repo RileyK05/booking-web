@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     index, UserView, CreateUserView, FeaturedRooms, 
     UserBookedRoomsView, DiscountedRoomsView, RoomDetailView,
@@ -21,4 +21,6 @@ urlpatterns = [
     path('payment/', PaymentView.as_view(), name='payment'),
     path('payment/success/', PaymentSuccessView.as_view(), name='payment_success'),
     path('payment/failed/', PaymentFailedView.as_view(), name='payment_failed'),
+
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
