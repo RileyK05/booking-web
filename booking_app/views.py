@@ -147,9 +147,10 @@ class InitiatePaymentView(LoginRequiredMixin, View):
     def post(self, request, pk):
         room = get_object_or_404(RoomItem, pk=pk)
         amount = int(room.price * 100)
-        address = Address.objects.first()
-        if not address:
-            return JsonResponse({"error": "No address available."}, status=404)
+
+        if not room.address:
+            return JsonResponse({"error": "Room does not have a valid address."}, status=404)
+
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -166,25 +167,29 @@ class InitiatePaymentView(LoginRequiredMixin, View):
             success_url=request.build_absolute_uri(reverse('payment_success')) + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.build_absolute_uri(reverse('payment_failed')),
         )
+
         booking = Booking.objects.create(
             user=request.user,
             check_in=timezone.now(),
             check_out=timezone.now() + timezone.timedelta(days=1),
+            stripe_session_id=session.id,
         )
-        room_booked = RoomBooked.objects.create(
+
+        RoomBooked.objects.create(
             booking=booking,
             room=room,
             price=room.price,
-            location=address,
             time_booked=timezone.now(),
             number_of_nights=1
         )
-        payment = Payment.objects.create(
+
+        Payment.objects.create(
             user=request.user,
             amount=room.price,
             stripe_charge_id=session.id,
             status='Pending'
         )
+
         return redirect(session.url, code=303)
 
 class PaymentSuccessView(LoginRequiredMixin, TemplateView):
@@ -194,7 +199,7 @@ class PaymentSuccessView(LoginRequiredMixin, TemplateView):
         session_id = request.GET.get('session_id')
         session = stripe.checkout.Session.retrieve(session_id)
         booking = get_object_or_404(Booking, stripe_session_id=session_id)
-        booking.status = 'Completed'
+        booking.payment_status = Booking.ORDER_COMPLETE
         booking.save()
         return super().get(request, *args, **kwargs)
 
@@ -205,6 +210,6 @@ class PaymentFailedView(LoginRequiredMixin, TemplateView):
         session_id = request.GET.get('session_id')
         if session_id:
             booking = get_object_or_404(Booking, stripe_session_id=session_id)
-            booking.status = 'Failed'
+            booking.payment_status = Booking.ORDER_FAILED
             booking.save()
         return super().get(request, *args, **kwargs)

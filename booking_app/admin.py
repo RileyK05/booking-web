@@ -33,15 +33,16 @@ class UserAdmin(admin.ModelAdmin):
 class RoomBookedInline(admin.TabularInline):
     model = models.RoomBooked
     extra = 1
-    raw_id_fields = ['location']  
+    raw_id_fields = ['room', 'booking']
+
 
 @admin.register(models.RoomItem)
 class RoomItemAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ['title']}
-    list_display = ['title', 'price', 'rooms_available', 'available']
+    list_display = ['title', 'price', 'rooms_available', 'available', 'address']
     list_editable = ['price', 'rooms_available', 'available']
-    list_filter = ['available']
-    search_fields = ['title', 'description']
+    list_filter = ['available', 'address__city', 'address__country']
+    search_fields = ['title', 'description', 'address__street', 'address__city']
     inlines = [RoomBookedInline]
     
     @admin.action(description='Clear Room Availability')
@@ -53,6 +54,7 @@ class RoomItemAdmin(admin.ModelAdmin):
             messages.WARNING
         )
 
+
 @admin.register(models.Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = [
@@ -62,12 +64,14 @@ class BookingAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'booking_reference']
     ordering = ['-time_placed']
 
+
 @admin.register(models.RoomBooked)
 class RoomBookedAdmin(admin.ModelAdmin):
-    list_display = ['room', 'booking', 'location', 'time_booked', 'number_of_nights', 'total_cost']
-    search_fields = ['room__title', 'booking__user__username', 'location__city']
-    list_filter = ['time_booked', 'location__city']
-    raw_id_fields = ['room', 'booking', 'location']
+    list_display = ['room', 'booking', 'time_booked', 'number_of_nights', 'total_cost']
+    search_fields = ['room__title', 'booking__user__username', 'room__address__city']
+    list_filter = ['time_booked', 'room__address__city']
+    raw_id_fields = ['room', 'booking']
+
 
 @admin.register(models.Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -75,15 +79,18 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ['room__title', 'user_reviewing__username']
     list_filter = ['rating']
 
+
 @admin.register(models.Discount)
 class DiscountAdmin(admin.ModelAdmin):
     list_display = ['amount_discounted']
     search_fields = ['amount_discounted']
 
+
 @admin.register(models.BookingInfo)
 class BookingInfoAdmin(admin.ModelAdmin):
     list_display = ['guest_count', 'special_requests']
     search_fields = ['special_requests']
+
 
 @admin.register(models.EventInfo)
 class EventInfoAdmin(admin.ModelAdmin):
@@ -92,6 +99,7 @@ class EventInfoAdmin(admin.ModelAdmin):
     list_filter = ['event_date']
     raw_id_fields = ['room', 'discount']
 
+
 @admin.register(models.Payment)
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ['user', 'amount', 'status', 'timestamp']
@@ -99,9 +107,9 @@ class PaymentAdmin(admin.ModelAdmin):
     list_filter = ['status', 'timestamp']
     ordering = ['-timestamp']
 
+
 @admin.register(models.Address)
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ['street', 'city', 'state', 'country', 'postal_code']
-    search_fields = ['street', 'city', 'country', 'postal_code']
+    list_display = ['user', 'street', 'city', 'state', 'country', 'postal_code']
+    search_fields = ['user__username', 'street', 'city', 'country', 'postal_code']
     list_filter = ['country', 'city']
-
