@@ -6,7 +6,6 @@ from uuid import uuid4
 
 
 class Address(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="addresses", null=True, blank=True)
     street = models.CharField(max_length=60)
     city = models.CharField(max_length=60)
     state = models.CharField(max_length=60, null=True, blank=True)
@@ -22,9 +21,22 @@ class User(AbstractUser):
     profile_rating = models.IntegerField(
         null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
+    addresses = models.ManyToManyField(Address, through='UserAddress', related_name='users')
 
     def __str__(self):
         return self.username
+
+
+class UserAddress(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user', 'address')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.address}"
 
 
 class Discount(models.Model):
