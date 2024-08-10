@@ -1,17 +1,17 @@
 import stripe
-from django.db.models import QuerySet
+from django.conf import settings
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, View, CreateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
-from django.conf import settings
 from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm
 from .models import (
     User, Discount, RoomItem, Booking, Address, 
     RoomBooked, Review, BookingInfo, EventInfo, Payment
 )
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -172,7 +172,7 @@ class InitiatePaymentView(LoginRequiredMixin, View):
             user=request.user,
             check_in=timezone.now(),
             check_out=timezone.now() + timezone.timedelta(days=1),
-            stripe_session_id=session.id,
+            stripe_session_id=session.id, 
         )
 
         RoomBooked.objects.create(

@@ -72,6 +72,7 @@ class Booking(models.Model):
     check_in = models.DateTimeField()
     check_out = models.DateTimeField()
     booking_reference = models.UUIDField(default=uuid4, editable=False, unique=True)
+    stripe_session_id = models.CharField(max_length=255, null=True, blank=True) 
 
     ORDER_PENDING = 'P'
     ORDER_COMPLETE = 'C'

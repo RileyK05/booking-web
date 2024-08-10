@@ -76,10 +76,10 @@ class RoomItemAdmin(admin.ModelAdmin):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = [
-        'user', 'time_placed', 'check_in', 'check_out', 'payment_status', 'booking_reference'
+        'user', 'time_placed', 'check_in', 'check_out', 'payment_status', 'booking_reference', 'stripe_session_id'
     ]
     list_filter = ['payment_status', 'time_placed']
-    search_fields = ['user__username', 'booking_reference']
+    search_fields = ['user__username', 'booking_reference', 'stripe_session_id']
     ordering = ['-time_placed']
 
 
