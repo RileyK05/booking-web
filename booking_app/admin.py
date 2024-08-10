@@ -33,7 +33,7 @@ class UserAdmin(admin.ModelAdmin):
 class RoomBookedInline(admin.TabularInline):
     model = models.RoomBooked
     extra = 1
-    raw_id_fields = ['location']  # Allows for easier searching when selecting related objects
+    raw_id_fields = ['location']  
 
 @admin.register(models.RoomItem)
 class RoomItemAdmin(admin.ModelAdmin):
@@ -67,7 +67,7 @@ class RoomBookedAdmin(admin.ModelAdmin):
     list_display = ['room', 'booking', 'location', 'time_booked', 'number_of_nights', 'total_cost']
     search_fields = ['room__title', 'booking__user__username', 'location__city']
     list_filter = ['time_booked', 'location__city']
-    raw_id_fields = ['room', 'booking', 'location']  # Improved usability
+    raw_id_fields = ['room', 'booking', 'location']
 
 @admin.register(models.Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -104,3 +104,4 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ['street', 'city', 'state', 'country', 'postal_code']
     search_fields = ['street', 'city', 'country', 'postal_code']
     list_filter = ['country', 'city']
+
