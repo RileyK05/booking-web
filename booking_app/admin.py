@@ -126,3 +126,5 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'stripe_charge_id']
     list_filter = ['status', 'timestamp']
     ordering = ['-timestamp']
+
+ 
