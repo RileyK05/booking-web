@@ -9,7 +9,7 @@ from django.utils import timezone
 from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm
 from .models import (
     User, Discount, RoomItem, Booking, Address, 
-    RoomBooked, Review, BookingInfo, EventInfo, Payment
+    RoomBooked, Review, BookingInfo, EventInfo, Payment, DatesBooked
 )
 
 
@@ -79,6 +79,11 @@ class RoomDetailView(DetailView):
     template_name = 'room_details.html'
     context_object_name = 'room'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bookings'] = self.object.dates_booked.all()
+        return context
+
 class BookingHistoryView(LoginRequiredMixin, ListView):
     model = Booking
     template_name = 'booking_history.html'
@@ -146,10 +151,13 @@ class BookingConfirmView(LoginRequiredMixin, DetailView):
 class InitiatePaymentView(LoginRequiredMixin, View):
     def post(self, request, pk):
         room = get_object_or_404(RoomItem, pk=pk)
-        amount = int(room.price * 100)
+        check_in = request.POST.get('check_in')
+        check_out = request.POST.get('check_out')
 
-        if not room.address:
-            return JsonResponse({"error": "Room does not have a valid address."}, status=404)
+        if not room.is_available(check_in, check_out):
+            return JsonResponse({"error": "Selected booking window is not available."}, status=400)
+
+        amount = int(room.price * 100)
 
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -170,9 +178,9 @@ class InitiatePaymentView(LoginRequiredMixin, View):
 
         booking = Booking.objects.create(
             user=request.user,
-            check_in=timezone.now(),
-            check_out=timezone.now() + timezone.timedelta(days=1),
-            stripe_session_id=session.id, 
+            check_in=check_in,
+            check_out=check_out,
+            stripe_session_id=session.id,
         )
 
         RoomBooked.objects.create(
@@ -180,7 +188,14 @@ class InitiatePaymentView(LoginRequiredMixin, View):
             room=room,
             price=room.price,
             time_booked=timezone.now(),
-            number_of_nights=1
+            number_of_nights=(timezone.datetime.strptime(check_out, '%Y-%m-%d') - timezone.datetime.strptime(check_in, '%Y-%m-%d')).days
+        )
+
+        DatesBooked.objects.create(
+            room=room,
+            booking=booking,
+            check_in=check_in,
+            check_out=check_out
         )
 
         Payment.objects.create(
@@ -192,6 +207,7 @@ class InitiatePaymentView(LoginRequiredMixin, View):
 
         return redirect(session.url, code=303)
 
+
 class PaymentSuccessView(LoginRequiredMixin, TemplateView):
     template_name = "payment_success.html"
 
@@ -201,15 +217,29 @@ class PaymentSuccessView(LoginRequiredMixin, TemplateView):
         booking = get_object_or_404(Booking, stripe_session_id=session_id)
         booking.payment_status = Booking.ORDER_COMPLETE
         booking.save()
+
+        for room_booked in booking.rooms_booked.all():
+            room_booked.room.rooms_available -= 1
+            room_booked.room.save()
+
         return super().get(request, *args, **kwargs)
+
 
 class PaymentFailedView(LoginRequiredMixin, TemplateView):
     template_name = "payment_failed.html"
 
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
+        booking = None
         if session_id:
             booking = get_object_or_404(Booking, stripe_session_id=session_id)
             booking.payment_status = Booking.ORDER_FAILED
             booking.save()
-        return super().get(request, *args, **kwargs)
+        return self.render_to_response({'booking': booking})
+
+
+class BookingWindowsView(LoginRequiredMixin, DetailView):
+    model = RoomItem
+    template_name = 'booking_windows.html'
+    context_object_name = 'room'
+

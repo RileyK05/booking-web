@@ -61,6 +61,13 @@ class RoomItem(models.Model):
     rooms_available = models.PositiveIntegerField(default=1)
     address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name="room_items")
     room_pictures = models.ImageField(upload_to='rooms/', null=True, blank=True)
+    
+    def is_available(self, check_in, check_out):
+        overlapping_bookings = self.dates_booked.filter(
+            check_in__lt=check_out,
+            check_out__gt=check_in
+        )
+        return not overlapping_bookings.exists()
 
     def __str__(self) -> str:
         return self.title
@@ -90,6 +97,22 @@ class Booking(models.Model):
     
     def __str__(self):
         return f"Booking {self.id} by {self.user.username} - {self.get_payment_status_display()}"
+    
+    
+class DatesBooked(models.Model):
+    room = models.ForeignKey(RoomItem, on_delete=models.CASCADE, related_name="dates_booked")
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name="dates_booked")
+    check_in = models.DateField()
+    check_out = models.DateField()
+
+    class Meta:
+        unique_together = ('room', 'check_in', 'check_out')
+        indexes = [
+            models.Index(fields=['room', 'check_in', 'check_out']),
+        ]
+
+    def __str__(self):
+        return f"Room {self.room.title} booked from {self.check_in} to {self.check_out}"
 
 
 class RoomBooked(models.Model):

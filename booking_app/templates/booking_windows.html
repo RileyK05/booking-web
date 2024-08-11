@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Select Booking Window{% endblock %}
+
+{% block content %}
+<h1>Select Your Booking Window for {{ room.title }}</h1>
+
+<form method="POST" action="{% url 'initiate_payment' room.id %}">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="check_in">Check-In Date:</label>
+        <input type="date" id="check_in" name="check_in" class="form-control" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="check_out">Check-Out Date:</label>
+        <input type="date" id="check_out" name="check_out" class="form-control" required>
+    </div>
+    
+    <button type="submit" class="btn btn-success">Proceed to Payment</button>
+</form>
+
+<h3>Existing Bookings</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">Check-In</th>
+            <th scope="col">Check-Out</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in room.dates_booked.all %}
+        <tr>
+            <td>{{ booking.check_in }}</td>
+            <td>{{ booking.check_out }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2" class="text-center">No bookings found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

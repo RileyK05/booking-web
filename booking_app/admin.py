@@ -8,7 +8,8 @@ from .models import (
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = [
-        'get_first_name', 'get_last_name', 'view_bookings', 'get_email', 'profile_rating'
+        'get_first_name', 'get_last_name', 
+        'view_bookings', 'get_email', 'profile_rating'
     ]
     ordering = ['first_name', 'last_name']
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
@@ -76,7 +77,8 @@ class RoomItemAdmin(admin.ModelAdmin):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = [
-        'user', 'time_placed', 'check_in', 'check_out', 'payment_status', 'booking_reference', 'stripe_session_id'
+        'user', 'time_placed', 'check_in', 'check_out', 
+        'payment_status', 'booking_reference', 'stripe_session_id'
     ]
     list_filter = ['payment_status', 'time_placed']
     search_fields = ['user__username', 'booking_reference', 'stripe_session_id']

@@ -7,9 +7,6 @@
 <p>{{ room.description }}</p>
 <p>Price: ${{ room.price }}</p>
 
-<form method="POST" action="{% url 'payment' room.id %}">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-success">Book Now</button>
-</form>
+<a href="{% url 'booking_windows' room.id %}" class="btn btn-primary">Select Booking Window</a>
 
 {% endblock %}
