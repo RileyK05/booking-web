@@ -1,8 +1,27 @@
 {% extends "base_generic.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Featured Rooms{% endblock %}
 
 {% block content %}
-<h1>Welcome to My Booking Site</h1>
-<p>This is the main landing page.</p>
+<div class="container mt-4">
+    <h1 class="text-center">Featured Rooms{% if location != "N/A" %} in {{ location }}{% endif %}</h1>
+    {% if rooms %}
+    <div class="row mt-4">
+        {% for room in rooms %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{ room.room_pictures.url }}" class="card-img-top" alt="Image of {{ room.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.title }}</h5>
+                    <p class="card-text">{{ room.description|truncatewords:10 }}</p>
+                    <a href="{% url 'room_detail' room.pk %}" class="btn btn-primary">View Room</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center">No rooms available{% if location != "N/A" %} in {{ location }}{% endif %}.</p>
+    {% endif %}
+</div>
 {% endblock %}

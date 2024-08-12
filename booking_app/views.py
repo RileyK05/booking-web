@@ -1,4 +1,5 @@
 import stripe
+import random
 from django.conf import settings
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, View, CreateView, TemplateView
@@ -6,12 +7,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
+from django.db.models import Q
 from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm
 from .models import (
     User, Discount, RoomItem, Booking, Address, 
     RoomBooked, Review, BookingInfo, EventInfo, Payment, DatesBooked
 )
-
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -33,16 +34,26 @@ class FeaturedRooms(ListView):
     model = RoomItem
     template_name = "room_main_view.html"
     context_object_name = "rooms"
-    paginate_by = 8
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(available=True).order_by('?')
+        cities_with_rooms = Address.objects.filter(room_items__available=True).values_list('city', flat=True).distinct()
+        if not cities_with_rooms.exists():
+            return RoomItem.objects.none()
+        
+        random_city = random.choice(cities_with_rooms)
+        queryset = RoomItem.objects.filter(address__city=random_city, available=True).order_by('?')[:4]
+        
+        if not queryset.exists():
+            return RoomItem.objects.none()
+        
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['featured'] = True
+        first_room = self.get_queryset().first()
+        context['location'] = first_room.address.city if first_room else "N/A"
         return context
+
 
 class UserBookedRoomsView(LoginRequiredMixin, ListView):
     model = RoomBooked
@@ -107,12 +118,6 @@ class ReviewSubmitView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('index')
 
-from django.views.generic import ListView
-from .models import RoomItem
-from .forms import RoomSearchForm
-
-from django.db.models import Q
-
 class RoomSearchView(ListView):
     model = RoomItem
     template_name = "room_main_view.html"
@@ -148,7 +153,6 @@ class RoomSearchView(ListView):
         
         return queryset
 
-
 class BookingConfirmView(LoginRequiredMixin, DetailView):
     model = Booking
     template_name = "booking_confirm.html"
@@ -169,22 +173,25 @@ class InitiatePaymentView(LoginRequiredMixin, View):
 
         amount = int(room.price * 100)
 
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': room.title,
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': room.title,
+                        },
+                        'unit_amount': amount,
                     },
-                    'unit_amount': amount,
-                },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url=request.build_absolute_uri(reverse('payment_success')) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=request.build_absolute_uri(reverse('payment_failed')),
-        )
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=request.build_absolute_uri(reverse('payment_success')) + '?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=request.build_absolute_uri(reverse('payment_failed')),
+            )
+        except stripe.error.StripeError as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
         booking = Booking.objects.create(
             user=request.user,
@@ -217,23 +224,23 @@ class InitiatePaymentView(LoginRequiredMixin, View):
 
         return redirect(session.url, code=303)
 
-
 class PaymentSuccessView(LoginRequiredMixin, TemplateView):
     template_name = "payment_success.html"
 
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
-        session = stripe.checkout.Session.retrieve(session_id)
-        booking = get_object_or_404(Booking, stripe_session_id=session_id)
-        booking.payment_status = Booking.ORDER_COMPLETE
-        booking.save()
+        try:
+            session = stripe.checkout.Session.retrieve(session_id)
+            booking = get_object_or_404(Booking, stripe_session_id=session_id)
+            booking.payment_status = Booking.ORDER_COMPLETE
+            booking.save()
 
-        for room_booked in booking.rooms_booked.all():
-            room_booked.room.rooms_available -= 1
-            room_booked.room.save()
-
+            for room_booked in booking.rooms_booked.all():
+                room_booked.room.rooms_available -= 1
+                room_booked.room.save()
+        except stripe.error.StripeError as e:
+            return JsonResponse({"error": str(e)}, status=500)
         return super().get(request, *args, **kwargs)
-
 
 class PaymentFailedView(LoginRequiredMixin, TemplateView):
     template_name = "payment_failed.html"
@@ -247,9 +254,7 @@ class PaymentFailedView(LoginRequiredMixin, TemplateView):
             booking.save()
         return self.render_to_response({'booking': booking})
 
-
 class BookingWindowsView(LoginRequiredMixin, DetailView):
     model = RoomItem
     template_name = 'booking_windows.html'
     context_object_name = 'room'
-
