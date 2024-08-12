@@ -252,3 +252,4 @@ class BookingWindowsView(LoginRequiredMixin, DetailView):
     model = RoomItem
     template_name = 'booking_windows.html'
     context_object_name = 'room'
+
