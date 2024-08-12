@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Featured Rooms{% endblock %}
+
+{% block content %}
+<h1>Featured Rooms{% if location != "N/A" %} in {{ location }}{% endif %}</h1>
+{% if rooms %}
+    {% for room in rooms %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ room.title }}</h5>
+            <p class="card-text">{{ room.description }}</p>
+            <a href="{% url 'room_detail' room.pk %}" class="btn btn-primary">View Room</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No rooms available{% if location != "N/A" %} in {{ location }}{% endif %}.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,173 @@
+[33mcommit 83e3edc8844f34e0a143b9215017e9a7c79d4084[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Mon Aug 12 15:02:40 2024 -0700
+
+    adding random rooms on front pg plus base gen cahnges
+
+[33mcommit ae80cb0c5abc9a2b8389f7376ab05357f806cfc9[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sun Aug 11 22:53:43 2024 -0700
+
+    base
+
+[33mcommit b2476dc3595d84cfc0e996e094d9b82dd6ddfac7[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sun Aug 11 18:08:52 2024 -0700
+
+    fixed search func
+
+[33mcommit 85c69d88eed3e6319bf4ea2aa6fa29bd39c7a4af[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sun Aug 11 18:02:15 2024 -0700
+
+    added search
+
+[33mcommit 2381cf4cfa192d12f9e4adc0dfd222299d4cef7a[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sun Aug 11 00:58:12 2024 -0700
+
+    slight changes to admin
+
+[33mcommit 2c084a191fb2cf955bf23cc924eec1be9c0ef5b2[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sat Aug 10 18:16:04 2024 -0700
+
+    updated booking window function
+
+[33mcommit d1a94f5f3acd84c1ab1c29312a40c3a405e9d75c[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sat Aug 10 14:28:15 2024 -0700
+
+    updated payments
+
+[33mcommit 94b2bcb5390c0a82e487a231299f72f2f181b905[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sat Aug 10 14:00:49 2024 -0700
+
+    updated addresses, again
+
+[33mcommit 6d205bf56180d6ea8d7b14ba24931dd5061f6e92[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sat Aug 10 13:44:29 2024 -0700
+
+    Updated addresses
+
+[33mcommit 64ec2248867fd5543a71251c05d15bd59a13a4f5[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sat Aug 10 13:27:34 2024 -0700
+
+    space
+
+[33mcommit dfd1bbacf79aeec6dceebba9ba2cb3acf8f832bc[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Fri Aug 9 13:34:10 2024 -0700
+
+    updated admin and a bunch of other stuff to fix backend
+
+[33mcommit d2735ad5d6bf0000f76371e1676697eb4d704a35[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 22:09:59 2024 -0700
+
+    I editone line, ONE LINE
+
+[33mcommit a001a14041cadbf70d72a34929ae14e3371ac3e5[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 22:02:07 2024 -0700
+
+    lookin good so far
+
+[33mcommit d1d0e14fece2ff72db516d5ba99a737ae53a98c8[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 21:53:06 2024 -0700
+
+    admin mostly done(could be wrong, idk)
+
+[33mcommit 7c6b1035c25be88bc600833ffb8b1fd693d29954[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 19:27:31 2024 -0700
+
+    pleak
+
+[33mcommit cf041d9a41ba11c026f995512aebd9a09a391f87[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 16:31:16 2024 -0700
+
+    added super basic templating to test function(will fix later)
+
+[33mcommit 45db350369bd5897f40de658f93b1aa5adfbf9b9[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 16:28:00 2024 -0700
+
+    added base gen and prettier ignore
+
+[33mcommit 4e626bb97452c05805187720b6f537097510a60a[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 15:20:20 2024 -0700
+
+    urls added
+
+[33mcommit b42bf99b5b5e8e3a05e05ee08dc2806f0f958412[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 15:18:02 2024 -0700
+
+    Okay, backend is a bit weird
+
+[33mcommit a8fcb04ad1f21256fa6468cd51980d0ac8333307[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 14:40:22 2024 -0700
+
+    secret info made secret
+
+[33mcommit f32f58dd00387c6a17e4a93dec32c530d6327250[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 13:47:41 2024 -0700
+
+    added git ignore
+
+[33mcommit 953d5f27e761c2309c2b03e5b4778753144877dd[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 13:17:28 2024 -0700
+
+    added booking info
+
+[33mcommit 565e56d7fda31bcc3629b5c80c44a174bfb210ef[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 13:08:20 2024 -0700
+
+    added search function(will likely need to be fixed later)
+
+[33mcommit 7d0b94b3979636e86f501a1ef5fc918d7846afd1[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Thu Aug 8 12:53:53 2024 -0700
+
+    added event info to models
+
+[33mcommit 20f94294426b171e954f92586a9add0c91acdd7b[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Wed Aug 7 23:13:36 2024 -0700
+
+    added a bunch of views
+
+[33mcommit 0703ae807aed63dda3496ebbd2080172b1302d39[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Sun Aug 4 22:18:34 2024 -0700
+
+    mismo
+
+[33mcommit 91ab7f85f7712a1219a2c686146e34be2b4afbc1[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Fri Aug 2 16:52:54 2024 -0700
+
+    models look done, could change later
+
+[33mcommit 6a83868bb376e03d1f979d740cbccf5b5fb01c96[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Fri Aug 2 13:38:41 2024 -0700
+
+    wtf
+
+[33mcommit 35af15a13670057f577297dcb85c34061f5db409[m
+Author: moomie1 <rileyk2809@gmail.com>
+Date:   Fri Aug 2 13:26:15 2024 -0700
+
+    init

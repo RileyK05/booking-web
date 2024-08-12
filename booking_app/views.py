@@ -30,30 +30,36 @@ class CreateUserView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('index')
 
-class FeaturedRooms(ListView):
+class FeaturedRoomsInCityView(View):
+    template_name = "index.html"
+    
+    def get(self, request, *args, **kwargs):
+        cities_with_rooms = Address.objects.filter(room_items__available=True).values_list('city', flat=True).distinct()
+        rooms = RoomItem.objects.none()
+        location = "N/A"
+
+        if cities_with_rooms.exists():
+            random_city = random.choice(cities_with_rooms)
+            rooms = RoomItem.objects.filter(address__city=random_city, available=True).order_by('?')[:4]
+            location = random_city
+
+        return render(request, self.template_name, {'rooms': rooms, 'location': location})
+
+class AllRoomsView(ListView):
     model = RoomItem
     template_name = "room_main_view.html"
     context_object_name = "rooms"
+    paginate_by = 8
 
     def get_queryset(self):
-        cities_with_rooms = Address.objects.filter(room_items__available=True).values_list('city', flat=True).distinct()
-        if not cities_with_rooms.exists():
-            return RoomItem.objects.none()
-        
-        random_city = random.choice(cities_with_rooms)
-        queryset = RoomItem.objects.filter(address__city=random_city, available=True).order_by('?')[:4]
-        
-        if not queryset.exists():
-            return RoomItem.objects.none()
-        
-        return queryset
+        return RoomItem.objects.filter(available=True).order_by('?')
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         first_room = self.get_queryset().first()
         context['location'] = first_room.address.city if first_room else "N/A"
         return context
-
 
 class UserBookedRoomsView(LoginRequiredMixin, ListView):
     model = RoomBooked

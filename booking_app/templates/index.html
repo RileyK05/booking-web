@@ -1,5 +1,7 @@
 {% extends "base_generic.html" %}
 
+{% load static %}
+
 {% block title %}Featured Rooms{% endblock %}
 
 {% block content %}
@@ -10,7 +12,11 @@
         {% for room in rooms %}
         <div class="col-md-3">
             <div class="card">
-                <img src="{{ room.room_pictures.url }}" class="card-img-top" alt="Image of {{ room.title }}">
+                {% if room.room_pictures %}
+                    <img src="{{ room.room_pictures.url }}" class="card-img-top" alt="Image of {{ room.title }}">
+                {% else %}
+                    <img src="{% static 'images/placeholder.png' %}" class="card-img-top" alt="No image available">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ room.title }}</h5>
                     <p class="card-text">{{ room.description|truncatewords:10 }}</p>
