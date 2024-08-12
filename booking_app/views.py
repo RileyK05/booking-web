@@ -111,6 +111,8 @@ from django.views.generic import ListView
 from .models import RoomItem
 from .forms import RoomSearchForm
 
+from django.db.models import Q
+
 class RoomSearchView(ListView):
     model = RoomItem
     template_name = "room_main_view.html"
@@ -128,7 +130,13 @@ class RoomSearchView(ListView):
         availability = self.request.GET.get('availability')
         
         if location:
-            queryset = queryset.filter(description__icontains=location)
+            queryset = queryset.filter(
+                Q(address__street__icontains=location) |
+                Q(address__city__icontains=location) |
+                Q(address__state__icontains=location) |
+                Q(address__country__icontains=location) |
+                Q(description__icontains=location)
+            )
         if min_price:
             queryset = queryset.filter(price__gte=min_price)
         if max_price:
@@ -139,11 +147,6 @@ class RoomSearchView(ListView):
             queryset = queryset.filter(rooms_available__gt=0)
         
         return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['search_form'] = RoomSearchForm(self.request.GET or None)
-        return context
 
 
 class BookingConfirmView(LoginRequiredMixin, DetailView):
