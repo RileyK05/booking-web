@@ -107,6 +107,10 @@ class ReviewSubmitView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('index')
 
+from django.views.generic import ListView
+from .models import RoomItem
+from .forms import RoomSearchForm
+
 class RoomSearchView(ListView):
     model = RoomItem
     template_name = "room_main_view.html"
@@ -116,11 +120,13 @@ class RoomSearchView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(available=True).order_by('?')
+        
         location = self.request.GET.get('location')
         min_price = self.request.GET.get('min_price')
         max_price = self.request.GET.get('max_price')
         amenities = self.request.GET.get('amenities')
         availability = self.request.GET.get('availability')
+        
         if location:
             queryset = queryset.filter(description__icontains=location)
         if min_price:
@@ -131,13 +137,14 @@ class RoomSearchView(ListView):
             queryset = queryset.filter(description__icontains=amenities)
         if availability:
             queryset = queryset.filter(rooms_available__gt=0)
+        
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['featured'] = True
         context['search_form'] = RoomSearchForm(self.request.GET or None)
         return context
+
 
 class BookingConfirmView(LoginRequiredMixin, DetailView):
     model = Booking
@@ -242,4 +249,3 @@ class BookingWindowsView(LoginRequiredMixin, DetailView):
     model = RoomItem
     template_name = 'booking_windows.html'
     context_object_name = 'room'
-
