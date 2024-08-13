@@ -5,7 +5,7 @@ from .views import (
     BookingHistoryView, ReviewSubmitView, RoomSearchView,
     BookingConfirmView, InitiatePaymentView, PaymentSuccessView, 
     PaymentFailedView, BookingWindowsView, FeaturedRoomsInCityView,
-    AboutView, ContactView, PrivatePolicyView
+    AboutView, ContactView, PrivatePolicyView, TermsOfServiceView
 )
 
 urlpatterns = [
@@ -14,7 +14,7 @@ urlpatterns = [
     path('about/', AboutView.as_view(), name='about'),
     path('contact/', ContactView.as_view(), name='contact'),
     path('private-policy/', PrivatePolicyView.as_view(), name='privacy_policy'),
-    path('terms-of-service/', PrivatePolicyView.as_view(), name='terms_of_service'),
+    path('terms-of-service/', TermsOfServiceView.as_view(), name='terms_of_service'),
     
     # User-related views
     path('user/', UserView.as_view(), name='user_profile'),

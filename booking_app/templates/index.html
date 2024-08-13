@@ -5,7 +5,7 @@
 {% block title %}Featured Rooms{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5"> <!-- Added mb-5 class here for spacing -->
+<div class="container mt-4 mb-5">
     <h1 class="text-center">Featured Rooms{% if location != "N/A" %} in {{ location }}{% endif %}</h1>
 
     <form method="get" action="{% url 'room_search' %}">

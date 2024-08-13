@@ -284,4 +284,6 @@ class PrivatePolicyView(TemplateView):
     template_name = "private_policy.html"
     
 class TermsOfServiceView(TemplateView):
-    template_name = "private_policy.html"
+    template_name = "terms_of_service.html"
+    
+    
