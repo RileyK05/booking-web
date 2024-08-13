@@ -131,33 +131,41 @@ class RoomSearchView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(available=True).order_by('?')
+        queryset = super().get_queryset().filter(available=True).order_by('?')
         
         location = self.request.GET.get('location')
-        min_price = self.request.GET.get('min_price')
-        max_price = self.request.GET.get('max_price')
-        amenities = self.request.GET.get('amenities')
-        availability = self.request.GET.get('availability')
-        
+        price_range = self.request.GET.get('price_range')
+        bedrooms = self.request.GET.get('bedrooms')
+
         if location:
             queryset = queryset.filter(
                 Q(address__street__icontains=location) |
                 Q(address__city__icontains=location) |
                 Q(address__state__icontains=location) |
-                Q(address__country__icontains=location) |
-                Q(description__icontains=location)
+                Q(address__country__icontains=location)
             )
-        if min_price:
-            queryset = queryset.filter(price__gte=min_price)
-        if max_price:
-            queryset = queryset.filter(price__lte=max_price)
-        if amenities:
-            queryset = queryset.filter(description__icontains=amenities)
-        if availability:
-            queryset = queryset.filter(rooms_available__gt=0)
+        
+        if price_range:
+            price_min, price_max = None, None
+            if '-' in price_range:
+                price_min, price_max = map(int, price_range.split('-'))
+            elif price_range.endswith('+'):
+                price_min = int(price_range[:-1])
+
+            if price_min is not None:
+                queryset = queryset.filter(price__gte=price_min)
+            if price_max is not None:
+                queryset = queryset.filter(price__lte=price_max)
+
+        if bedrooms:
+            if bedrooms == "5+":
+                queryset = queryset.filter(number_of_rooms__gte=5)
+            else:
+                queryset = queryset.filter(number_of_rooms=bedrooms)
         
         return queryset
+
+
 
 class BookingConfirmView(LoginRequiredMixin, DetailView):
     model = Booking
