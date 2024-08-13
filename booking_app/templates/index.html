@@ -7,6 +7,37 @@
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center">Featured Rooms{% if location != "N/A" %} in {{ location }}{% endif %}</h1>
+    
+    <!-- ------------------------ Filter Section Starts ------------------------ -->
+    <form method="get" action="{% url 'room_search' %}">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search by title or description">
+            </div>
+            <div class="col-md-3">
+                <select name="price_range" class="form-control">
+                    <option value="">Price Range</option>
+                    <option value="0-100">Under $100</option>
+                    <option value="100-200">$100 to $200</option>
+                    <option value="200-300">$200 to $300</option>
+                    <option value="300+">Above $300</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="bedrooms" class="form-control">
+                    <option value="">Bedrooms</option>
+                    <option value="1">1 Bedroom</option>
+                    <option value="2">2 Bedrooms</option>
+                    <option value="3">3 Bedrooms</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success w-100">Filter</button>
+            </div>
+        </div>
+    </form>
+    <!-- ------------------------ Filter Section Ends ------------------------ -->
+
     {% if rooms %}
     <div class="row mt-4">
         {% for room in rooms %}
@@ -20,6 +51,12 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ room.title }}</h5>
                     <p class="card-text">{{ room.description|truncatewords:10 }}</p>
+                    <p class="card-text"><strong>${{ room.price }}</strong> per night</p>
+                    {% if room.available %}
+                        <p class="text-success">Available</p>
+                    {% else %}
+                        <p class="text-danger">Not Available</p>
+                    {% endif %}
                     <a href="{% url 'room_detail' room.pk %}" class="btn btn-primary">View Room</a>
                 </div>
             </div>
@@ -30,16 +67,59 @@
     <p class="text-center">No rooms available{% if location != "N/A" %} in {{ location }}{% endif %}.</p>
     {% endif %}
 </div>
-<div>
 
 
-
-    
+<!-- ------------------------ Why Choose Us Section Starts ------------------------ -->
+<div class="py-4 mt-5">
+    <h2 class="text-center">Why Choose Us?</h2>
+    <div class="row mt-4 text-center">
+        <div class="col-md-4">
+            <i class="fas fa-dollar-sign fa-3x mb-3"></i>
+            <h4>Best Price Guarantee</h4>
+            <p>We offer the best prices for our rooms, guaranteed.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-headset fa-3x mb-3"></i>
+            <h4>24/7 Support</h4>
+            <p>Our customer support is available around the clock.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-check-circle fa-3x mb-3"></i>
+            <h4>Quality Assurance</h4>
+            <p>All our rooms are verified for quality and comfort.</p>
+        </div>
+    </div>
 </div>
+<!-- ------------------------ Why Choose Us Section Ends ------------------------ -->
 
-
-
+<!-- ------------------------ Footer Section Starts ------------------------ -->
+<footer class="py-4 mt-5">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Company</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'about' %}" class="text-white">About Us</a></li>
+                    <li><a href="{% url 'contact' %}" class="text-white">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <a href="#" class="text-white me-2"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+            </div>
+            <div class="col-md-4">
+                <h5>Legal</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'privacy_policy' %}" class="text-white">Privacy Policy</a></li>
+                    <li><a href="{% url 'terms_of_service' %}" class="text-white">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="mt-3">&copy; 2024 Your Company. All rights reserved.</p>
+    </div>
+</footer>
+<!-- ------------------------ Footer Section Ends ------------------------ -->
 
 {% endblock %}
-
-
