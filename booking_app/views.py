@@ -161,8 +161,6 @@ class RoomSearchView(ListView):
         
         return queryset
 
-
-
 class BookingConfirmView(LoginRequiredMixin, DetailView):
     model = Booking
     template_name = "booking_confirm.html"
@@ -269,7 +267,6 @@ class BookingWindowsView(LoginRequiredMixin, DetailView):
     template_name = 'booking_windows.html'
     context_object_name = 'room'
     
-
 class AboutView(TemplateView):
     template_name = "about.html"
     
@@ -291,11 +288,14 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return self.request.user
     
-class BookingDetailView(LoginRequiredMixin, DetailView):
-    model = Booking
-    template_name = 'booking_detail.html'
-    context_object_name = 'booking'
+    
+class BookingHistoryView(LoginRequiredMixin, ListView):
+    model = RoomBooked
+    template_name = 'booking_history.html'
+    context_object_name = 'room_booked'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+        return queryset.filter(booking__user=self.request.user).order_by('-time_booked')
+

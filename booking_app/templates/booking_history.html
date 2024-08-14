@@ -5,8 +5,8 @@
 {% block content %}
 <div class="container my-5">
     <h1 class="mb-4">My Booked Rooms</h1>
-    {% if bookings %}
-        {% for booking in bookings %}
+    {% if room_booked %}
+        {% for booking in room_booked %}
             <div class="card mb-3">
                 <div class="row no-gutters">
                     {% if booking.room.room_pictures %}
@@ -18,12 +18,11 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ booking.room.title }}</h5>
                             <p class="card-text"><strong>Booking Date:</strong> {{ booking.time_booked|date:"F j, Y, g:i a" }}</p>
-                            <p class="card-text"><strong>Check-in:</strong> {{ booking.check_in|date:"F j, Y" }}</p>
-                            <p class="card-text"><strong>Check-out:</strong> {{ booking.check_out|date:"F j, Y" }}</p>
+                            <p class="card-text"><strong>Check-in:</strong> {{ booking.booking.check_in|date:"F j, Y" }}</p>
+                            <p class="card-text"><strong>Check-out:</strong> {{ booking.booking.check_out|date:"F j, Y" }}</p>
                             <p class="card-text"><strong>Total Nights:</strong> {{ booking.number_of_nights }}</p>
                             <p class="card-text"><strong>Total Cost:</strong> ${{ booking.total_cost }}</p>
                             <a href="{% url 'room_detail' booking.room.pk %}" class="btn btn-primary">View Room Details</a>
-                            <a href="{% url 'booking_detail' booking.pk %}" class="btn btn-secondary ml-2">View Booking Details</a>
                         </div>
                     </div>
                 </div>
