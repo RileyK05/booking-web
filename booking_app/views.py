@@ -292,10 +292,9 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 class BookingHistoryView(LoginRequiredMixin, ListView):
     model = RoomBooked
     template_name = 'booking_history.html'
-    context_object_name = 'room_booked'
+    context_object_name = 'bookings'
     paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(booking__user=self.request.user).order_by('-time_booked')
-

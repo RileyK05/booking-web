@@ -97,7 +97,7 @@ class Booking(models.Model):
     
     def __str__(self):
         return f"Booking {self.id} by {self.user.username} - {self.get_payment_status_display()}"
-    
+
     
 class DatesBooked(models.Model):
     room = models.ForeignKey(RoomItem, on_delete=models.CASCADE, related_name="dates_booked")
