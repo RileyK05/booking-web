@@ -161,8 +161,6 @@ class RoomSearchView(ListView):
         
         return queryset
 
-
-
 class BookingConfirmView(LoginRequiredMixin, DetailView):
     model = Booking
     template_name = "booking_confirm.html"
@@ -292,7 +290,7 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
         return self.request.user
     
 class BookingDetailView(LoginRequiredMixin, DetailView):
-    model = Booking
+    model = RoomBooked
     template_name = 'booking_detail.html'
     context_object_name = 'booking'
 
