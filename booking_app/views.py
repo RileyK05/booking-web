@@ -292,7 +292,7 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 class BookingHistoryView(LoginRequiredMixin, ListView):
     model = RoomBooked
     template_name = 'booking_history.html'
-    context_object_name = 'bookings'
+    context_object_name = 'room_booked'
     paginate_by = 10
 
     def get_queryset(self):

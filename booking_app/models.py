@@ -128,7 +128,6 @@ class RoomBooked(models.Model):
     def __str__(self):
         return f"Room {self.room.title} booked for {self.booking.user.username}"
 
-
 class Review(models.Model):
     room = models.ForeignKey(RoomItem, on_delete=models.CASCADE, related_name="reviews")
     description = models.TextField()
