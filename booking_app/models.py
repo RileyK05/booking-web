@@ -78,6 +78,7 @@ class Booking(models.Model):
     time_placed = models.DateTimeField(auto_now=True)
     check_in = models.DateTimeField()
     check_out = models.DateTimeField()
+    room = models.ForeignKey(RoomItem, on_delete=models.PROTECT, related_name="booked_rooms")
     booking_reference = models.UUIDField(default=uuid4, editable=False, unique=True)
     stripe_session_id = models.CharField(max_length=255, null=True, blank=True) 
 
@@ -97,7 +98,7 @@ class Booking(models.Model):
     
     def __str__(self):
         return f"Booking {self.id} by {self.user.username} - {self.get_payment_status_display()}"
-    
+
     
 class DatesBooked(models.Model):
     room = models.ForeignKey(RoomItem, on_delete=models.CASCADE, related_name="dates_booked")
@@ -117,7 +118,7 @@ class DatesBooked(models.Model):
 
 class RoomBooked(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="rooms_booked")
-    room = models.ForeignKey(RoomItem, on_delete=models.PROTECT, related_name="bookings")
+    room = models.ForeignKey(RoomItem, on_delete=models.PROTECT, related_name="room_bookings")
     price = models.DecimalField(max_digits=6, decimal_places=2)
     time_booked = models.DateTimeField()
     number_of_nights = models.PositiveIntegerField()
