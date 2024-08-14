@@ -1,12 +1,73 @@
 {% extends "base_generic.html" %}
+{% load static %}
 
-{% block title %}Room Details{% endblock %}
+{% block title %}{{ room.title }} Details{% endblock %}
 
 {% block content %}
-<h1>{{ room.title }}</h1>
-<p>{{ room.description }}</p>
-<p>Price: ${{ room.price }}</p>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-7">
+            <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for picture in room.room_pictures.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ picture.url }}" class="d-block w-100" alt="{{ room.title }}">
+                        </div>
+                    {% empty %}
+                        <div class="carousel-item active">
+                            <img src="{% static 'images/placeholder.png' %}" class="d-block w-100" alt="Default Room Image">
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
 
-<a href="{% url 'booking_windows' room.id %}" class="btn btn-primary">Select Booking Window</a>
+        <div class="col-md-5">
+            <h1>{{ room.title }}</h1>
+            <p class="text-muted">{{ room.address.street }}, {{ room.address.city }}{% if room.address.state %}, {{ room.address.state }}{% endif %}, {{ room.address.country }}</p>
+            <hr>
+            <p><strong>Price per night:</strong> ${{ room.price }}</p>
+            <p><strong>Rooms available:</strong> {{ room.rooms_available }}</p>
+            <p><strong>Bedrooms:</strong> {{ room.number_of_rooms }}</p>
+            {% if room.discount.exists %}
+                <p class="text-success"><strong>Discounts available!</strong></p>
+            {% endif %}
+            <a href="{% url 'booking_windows' room.id %}" class="btn btn-primary btn-lg w-100 mt-3">Select Booking Window</a>
+        </div>
+    </div>
 
+    <div class="row mt-5">
+        <div class="col">
+            <h2>About This Room</h2>
+            <p>{{ room.description }}</p>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col">
+            <h2>Guest Reviews</h2>
+            {% if room.reviews.exists %}
+                {% for review in room.reviews.all %}
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.user_reviewing.username }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Rating: {{ review.rating }} / 5</h6>
+                            <p class="card-text">{{ review.description }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No reviews yet. Be the first to review this room!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

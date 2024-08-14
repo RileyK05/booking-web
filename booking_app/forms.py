@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import User, Review, RoomItem
 
 class CustomUserCreationForm(UserCreationForm):
@@ -19,3 +19,10 @@ class RoomSearchForm(forms.Form):
     max_price = forms.DecimalField(required=False, min_value=0)
     amenities = forms.CharField(required=False)
     availability = forms.BooleanField(required=False)
+
+class EditProfileForm(UserChangeForm):
+    password = None
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'profile_picture']

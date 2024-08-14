@@ -6,5 +6,12 @@
 <h1>User Profile</h1>
 <p>Username: {{ user.username }}</p>
 <p>Email: {{ user.email }}</p>
+<p>First Name: {{ user.first_name }}</p> 
+<p>Last Name: {{ user.last_name }}</p>
+
+<a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+
 <a href="{% url 'booking_history' %}" class="btn btn-primary">View Booking History</a>
+
+
 {% endblock %}

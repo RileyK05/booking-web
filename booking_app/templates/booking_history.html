@@ -1,17 +1,36 @@
 {% extends "base_generic.html" %}
 
-{% block title %}Booking History{% endblock %}
+{% block title %}My Booked Rooms{% endblock %}
 
 {% block content %}
-<h1>My Booking History</h1>
-{% for booking in bookings %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">Booking #{{ booking.pk }}</h5>
-            <p class="card-text">Check-in: {{ booking.check_in }}</p>
-            <p class="card-text">Check-out: {{ booking.check_out }}</p>
-            <p class="card-text">Status: {{ booking.get_payment_status_display }}</p>
-        </div>
-    </div>
-{% endfor %}
+<div class="container my-5">
+    <h1 class="mb-4">My Booked Rooms</h1>
+    {% if bookings %}
+        {% for booking in bookings %}
+            <div class="card mb-3">
+                <div class="row no-gutters">
+                    {% if booking.room.room_pictures %}
+                        <div class="col-md-4">
+                            <img src="{{ booking.room.room_pictures.url }}" class="card-img" alt="{{ booking.room.title }}">
+                        </div>
+                    {% endif %}
+                    <div class="{% if booking.room.room_pictures %}col-md-8{% else %}col-md-12{% endif %}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ booking.room.title }}</h5>
+                            <p class="card-text"><strong>Booking Date:</strong> {{ booking.time_booked|date:"F j, Y, g:i a" }}</p>
+                            <p class="card-text"><strong>Check-in:</strong> {{ booking.check_in|date:"F j, Y" }}</p>
+                            <p class="card-text"><strong>Check-out:</strong> {{ booking.check_out|date:"F j, Y" }}</p>
+                            <p class="card-text"><strong>Total Nights:</strong> {{ booking.number_of_nights }}</p>
+                            <p class="card-text"><strong>Total Cost:</strong> ${{ booking.total_cost }}</p>
+                            <a href="{% url 'room_detail' booking.room.pk %}" class="btn btn-primary">View Room Details</a>
+                            <a href="{% url 'booking_detail' booking.pk %}" class="btn btn-secondary ml-2">View Booking Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no booked rooms.</p>
+    {% endif %}
+</div>
 {% endblock %}

@@ -2,13 +2,13 @@ import stripe
 import random
 from django.conf import settings
 from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, DetailView, View, CreateView, TemplateView
+from django.views.generic import ListView, DetailView, View, CreateView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models import Q
-from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm
+from .forms import CustomUserCreationForm, ReviewForm, RoomSearchForm, EditProfileForm
 from .models import (
     User, Discount, RoomItem, Booking, Address, 
     RoomBooked, Review, BookingInfo, EventInfo, Payment, DatesBooked
@@ -68,13 +68,9 @@ class UserBookedRoomsView(LoginRequiredMixin, ListView):
     paginate_by = 8
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         if self.request.user.is_authenticated:
-            rooms_booked = RoomBooked.objects.filter(
-                booking__user=self.request.user
-            ).values_list('id', flat=True)
-            queryset = queryset.filter(id__in=rooms_booked)
-        return queryset
+            return RoomBooked.objects.filter(booking__user=self.request.user)
+        return RoomBooked.objects.none()
 
 class DiscountedRoomsView(ListView):
     model = RoomItem
@@ -286,4 +282,20 @@ class PrivatePolicyView(TemplateView):
 class TermsOfServiceView(TemplateView):
     template_name = "terms_of_service.html"
     
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'edit_profile.html'
+    success_url = reverse_lazy('user_profile')  
+
+    def get_object(self):
+        return self.request.user
     
+class BookingDetailView(LoginRequiredMixin, DetailView):
+    model = Booking
+    template_name = 'booking_detail.html'
+    context_object_name = 'booking'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
