@@ -1,7 +1,10 @@
 # Django Room Booking App
 
 ## Overview
-This is a Django-based room booking system that allows users to browse rooms, make bookings, leave reviews, and manage their profiles. The app also integrates Stripe for payment processing.
+This is a Django-based room booking system that allows users to browse rooms, make bookings, leave reviews, and manage their profiles. The app also integrates Stripe for payment processing.\
+
+## Creation
+This is a simple project I created to learn some interesting things about Django and webapp development. I would say that I've learned quite a bit throughout the process. There were a lot of difficult parts in breaking down how to best approach each part of the project, but for the most part I found it to be a very enjoyable simple project to create. I wanted to model it as if it was a simple app like Booking.com or AirBnB, and I believe it went reasonably well. 
 
 ## Features
 - **User Authentication**: Users can create accounts, log in, and manage their profiles.
